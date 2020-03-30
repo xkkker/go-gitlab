@@ -113,7 +113,10 @@ const exampleReleaseListRsp = `[
 ]`
 
 func TestReleasesService_ListReleases(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases",
@@ -177,7 +180,10 @@ const exampleReleaseRsp = `{
 }`
 
 func TestReleasesService_GetRelease(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases/v0.1",
@@ -196,7 +202,10 @@ func TestReleasesService_GetRelease(t *testing.T) {
 }
 
 func TestReleasesService_CreateRelease(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases",
@@ -233,7 +242,10 @@ func TestReleasesService_CreateRelease(t *testing.T) {
 }
 
 func TestReleasesService_CreateReleaseWithAsset(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases",
@@ -275,7 +287,10 @@ func TestReleasesService_CreateReleaseWithAsset(t *testing.T) {
 }
 
 func TestReleasesService_UpdateRelease(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases/v0.1",
@@ -300,7 +315,10 @@ func TestReleasesService_UpdateRelease(t *testing.T) {
 }
 
 func TestReleasesService_DeleteRelease(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases/v0.1",

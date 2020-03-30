@@ -9,7 +9,10 @@ import (
 )
 
 func TestCreateGroupGroupLabel(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/labels", func(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +36,10 @@ func TestCreateGroupGroupLabel(t *testing.T) {
 }
 
 func TestDeleteGroupLabel(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/labels", func(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +50,7 @@ func TestDeleteGroupLabel(t *testing.T) {
 		Name: String("My GroupLabel"),
 	}
 
-	_, err := client.GroupLabels.DeleteGroupLabel("1", label)
+	_, err = client.GroupLabels.DeleteGroupLabel("1", label)
 
 	if err != nil {
 		log.Fatal(err)
@@ -52,7 +58,10 @@ func TestDeleteGroupLabel(t *testing.T) {
 }
 
 func TestUpdateGroupLabel(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/labels", func(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +93,10 @@ func TestUpdateGroupLabel(t *testing.T) {
 }
 
 func TestSubscribeToGroupLabel(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/labels/5/subscribe", func(w http.ResponseWriter, r *http.Request) {
@@ -103,21 +115,27 @@ func TestSubscribeToGroupLabel(t *testing.T) {
 }
 
 func TestUnsubscribeFromGroupLabel(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/labels/5/unsubscribe", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "POST")
 	})
 
-	_, err := client.GroupLabels.UnsubscribeFromGroupLabel("1", "5")
+	_, err = client.GroupLabels.UnsubscribeFromGroupLabel("1", "5")
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func TestListGroupLabels(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/labels", func(w http.ResponseWriter, r *http.Request) {

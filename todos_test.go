@@ -8,7 +8,10 @@ import (
 )
 
 func TestListTodos(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/todos", func(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +29,10 @@ func TestListTodos(t *testing.T) {
 }
 
 func TestMarkAllTodosAsDone(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/todos/mark_as_done", func(w http.ResponseWriter, r *http.Request) {
@@ -34,18 +40,21 @@ func TestMarkAllTodosAsDone(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	_, err := client.Todos.MarkAllTodosAsDone()
+	_, err = client.Todos.MarkAllTodosAsDone()
 	require.NoError(t, err)
 }
 
 func TestMarkTodoAsDone(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/todos/1/mark_as_done", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "POST")
 	})
 
-	_, err := client.Todos.MarkTodoAsDone(1)
+	_, err = client.Todos.MarkTodoAsDone(1)
 	require.NoError(t, err)
 }

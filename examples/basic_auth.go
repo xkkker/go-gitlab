@@ -8,7 +8,12 @@ import (
 
 // This example shows how to create a client with username and password.
 func basicAuthExample() {
-	git, err := gitlab.NewBasicAuthClient(nil, "https://gitlab.company.com", "svanharmelen", "password")
+	git, err := gitlab.NewBasicAuthClient(
+		nil,
+		"svanharmelen",
+		"password",
+		gitlab.WithBaseURL("https://gitlab.company.com"),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}

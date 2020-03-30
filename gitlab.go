@@ -18,7 +18,6 @@
 package gitlab
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -335,6 +334,9 @@ type Client struct {
 	// should always be specified with a trailing slash.
 	baseURL *url.URL
 
+	// disableRetries is used to disable the default retry logic.
+	disableRetries bool
+
 	// Limiter is used to limit API calls and prevent 429 responses.
 	limiter *rate.Limiter
 
@@ -436,24 +438,30 @@ type ListOptions struct {
 // NewClient returns a new GitLab API client. If a nil httpClient is
 // provided, http.DefaultClient will be used. To use API methods which require
 // authentication, provide a valid private or personal token.
-func NewClient(httpClient *http.Client, token string) *Client {
-	client := newClient(httpClient)
+func NewClient(httpClient *http.Client, token string, options ...ClientOptionFunc) (*Client, error) {
+	client, err := newClient(httpClient, options...)
+	if err != nil {
+		return nil, err
+	}
 	client.authType = privateToken
 	client.token = token
-	return client
+	return client, nil
 }
 
 // NewBasicAuthClient returns a new GitLab API client. If a nil httpClient is
 // provided, http.DefaultClient will be used. To use API methods which require
 // authentication, provide a valid username and password.
-func NewBasicAuthClient(httpClient *http.Client, endpoint, username, password string) (*Client, error) {
-	client := newClient(httpClient)
+func NewBasicAuthClient(httpClient *http.Client, username, password string, options ...ClientOptionFunc) (*Client, error) {
+	client, err := newClient(httpClient, options...)
+	if err != nil {
+		return nil, err
+	}
+
 	client.authType = basicAuth
 	client.username = username
 	client.password = password
-	client.SetBaseURL(endpoint)
 
-	err := client.requestOAuthToken(context.TODO())
+	err = client.requestOAuthToken(context.Background())
 	if err != nil {
 		return nil, err
 	}
@@ -480,14 +488,17 @@ func (c *Client) requestOAuthToken(ctx context.Context) error {
 // NewOAuthClient returns a new GitLab API client. If a nil httpClient is
 // provided, http.DefaultClient will be used. To use API methods which require
 // authentication, provide a valid oauth token.
-func NewOAuthClient(httpClient *http.Client, token string) *Client {
-	client := newClient(httpClient)
+func NewOAuthClient(httpClient *http.Client, token string, options ...ClientOptionFunc) (*Client, error) {
+	client, err := newClient(httpClient)
+	if err != nil {
+		return nil, err
+	}
 	client.authType = oAuthToken
 	client.token = token
-	return client
+	return client, nil
 }
 
-func newClient(httpClient *http.Client) *Client {
+func newClient(httpClient *http.Client, options ...ClientOptionFunc) (*Client, error) {
 	if httpClient == nil {
 		httpClient = cleanhttp.DefaultPooledClient()
 	}
@@ -505,8 +516,20 @@ func newClient(httpClient *http.Client) *Client {
 		RetryMax:     30,
 	}
 
-	// Set the default base URL.
-	_ = c.SetBaseURL(defaultBaseURL)
+	// Set the default base URL and apply any given client options.
+	for _, fn := range append([]ClientOptionFunc{WithBaseURL(defaultBaseURL)}, options...) {
+		if fn == nil {
+			continue
+		}
+		if err := fn(c); err != nil {
+			return nil, err
+		}
+	}
+
+	// Configure the rate limiter.
+	if err := c.configureLimiter(); err != nil {
+		return nil, err
+	}
 
 	// Create the internal timeStats service.
 	timeStats := &timeStatsService{client: c}
@@ -583,7 +606,7 @@ func newClient(httpClient *http.Client) *Client {
 	c.Version = &VersionService{client: c}
 	c.Wikis = &WikisService{client: c}
 
-	return c
+	return c, nil
 }
 
 // retryHTTPCheck provides a callback for Client.CheckRetry which
@@ -595,7 +618,7 @@ func (c *Client) retryHTTPCheck(ctx context.Context, resp *http.Response, err er
 	if err != nil {
 		return false, err
 	}
-	if resp.StatusCode == 429 || resp.StatusCode >= 500 {
+	if !c.disableRetries && (resp.StatusCode == 429 || resp.StatusCode >= 500) {
 		return true, nil
 	}
 	return false, nil
@@ -644,36 +667,6 @@ func rateLimitBackoff(min, max time.Duration, attemptNum int, resp *http.Respons
 	return min + jitter
 }
 
-// BaseURL return a copy of the baseURL.
-func (c *Client) BaseURL() *url.URL {
-	u := *c.baseURL
-	return &u
-}
-
-// SetBaseURL sets the base URL for API requests to a custom endpoint. urlStr
-// should always be specified with a trailing slash.
-func (c *Client) SetBaseURL(urlStr string) error {
-	// Make sure the given URL end with a slash
-	if !strings.HasSuffix(urlStr, "/") {
-		urlStr += "/"
-	}
-
-	baseURL, err := url.Parse(urlStr)
-	if err != nil {
-		return err
-	}
-
-	if !strings.HasSuffix(baseURL.Path, apiVersionPath) {
-		baseURL.Path += apiVersionPath
-	}
-
-	// Update the base URL of the client.
-	c.baseURL = baseURL
-
-	// Reconfigure the rate limiter.
-	return c.configureLimiter()
-}
-
 // configureLimiter configures the rate limiter.
 func (c *Client) configureLimiter() error {
 	// Set default values for when rate limiting is disabled.
@@ -716,8 +709,14 @@ func (c *Client) configureLimiter() error {
 	return nil
 }
 
+// BaseURL return a copy of the baseURL.
+func (c *Client) BaseURL() *url.URL {
+	u := *c.baseURL
+	return &u
+}
+
 // NewRequest creates an API request. A relative URL path can be provided in
-// urlStr, in which case it is resolved relative to the base URL of the Client.
+// path, in which case it is resolved relative to the base URL of the Client.
 // Relative URL paths should always be specified without a preceding slash. If
 // specified, the value pointed to by body is JSON encoded and included as the
 // request body.
@@ -732,13 +731,6 @@ func (c *Client) NewRequest(method, path string, opt interface{}, options []Opti
 	u.RawPath = c.baseURL.Path + path
 	u.Path = c.baseURL.Path + unescaped
 
-	if opt != nil {
-		q, err := query.Values(opt)
-		if err != nil {
-			return nil, err
-		}
-		u.RawQuery = q.Encode()
-	}
 	// Create a request specific headers map.
 	reqHeaders := make(http.Header)
 	reqHeaders.Set("Accept", "application/json")
@@ -755,17 +747,22 @@ func (c *Client) NewRequest(method, path string, opt interface{}, options []Opti
 	}
 
 	var body interface{}
-	if method == "POST" || method == "PUT" {
-		u.RawQuery = ""
+	switch {
+	case method == "POST" || method == "PUT":
 		reqHeaders.Set("Content-Type", "application/json")
 
 		if opt != nil {
-			bodyBytes, err := json.Marshal(opt)
+			body, err = json.Marshal(opt)
 			if err != nil {
 				return nil, err
 			}
-			body = bytes.NewReader(bodyBytes)
 		}
+	case opt != nil:
+		q, err := query.Values(opt)
+		if err != nil {
+			return nil, err
+		}
+		u.RawQuery = q.Encode()
 	}
 
 	req, err := retryablehttp.NewRequest(method, u.String(), body)
@@ -777,7 +774,6 @@ func (c *Client) NewRequest(method, path string, opt interface{}, options []Opti
 		if fn == nil {
 			continue
 		}
-
 		if err := fn(req); err != nil {
 			return nil, err
 		}
@@ -993,10 +989,42 @@ func parseError(raw interface{}) string {
 	}
 }
 
-// OptionFunc can be passed to all API requests to make the API call as if you were
-// another user, provided your private token is from an administrator account.
-//
-// GitLab docs: https://docs.gitlab.com/ce/api/README.html#sudo
+// ClientOptionFunc can be used customize a new GitLab API client.
+type ClientOptionFunc func(*Client) error
+
+// WithBaseURL sets the base URL for API requests to a custom endpoint.
+func WithBaseURL(urlStr string) ClientOptionFunc {
+	return func(c *Client) error {
+		// Make sure the given URL end with a slash
+		if !strings.HasSuffix(urlStr, "/") {
+			urlStr += "/"
+		}
+
+		baseURL, err := url.Parse(urlStr)
+		if err != nil {
+			return err
+		}
+
+		if !strings.HasSuffix(baseURL.Path, apiVersionPath) {
+			baseURL.Path += apiVersionPath
+		}
+
+		// Update the base URL of the client.
+		c.baseURL = baseURL
+
+		return nil
+	}
+}
+
+// WithoutRetries disables the default retry logic.
+func WithoutRetries() ClientOptionFunc {
+	return func(c *Client) error {
+		c.disableRetries = true
+		return nil
+	}
+}
+
+// OptionFunc can be passed to all API requests to customize the API request.
 type OptionFunc func(*retryablehttp.Request) error
 
 // WithSudo takes either a username or user ID and sets the SUDO request header

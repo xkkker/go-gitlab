@@ -8,7 +8,10 @@ import (
 )
 
 func TestGetKeyWithUser(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/keys/1",

@@ -20,7 +20,7 @@ import (
 // setup sets up a test HTTP server along with a gitlab.Client that is
 // configured to talk to that test server.  Tests should register handlers on
 // mux which provide mock responses for the API method being tested.
-func setup() (*http.ServeMux, *httptest.Server, *Client) {
+func setup() (*http.ServeMux, *httptest.Server, *Client, error) {
 	// mux is the HTTP request multiplexer used with the test server.
 	mux := http.NewServeMux()
 
@@ -28,10 +28,13 @@ func setup() (*http.ServeMux, *httptest.Server, *Client) {
 	server := httptest.NewServer(mux)
 
 	// client is the Gitlab client being tested.
-	client := NewClient(nil, "")
-	client.SetBaseURL(server.URL)
+	client, err := NewClient(nil, "", WithBaseURL(server.URL))
+	if err != nil {
+		server.Close()
+		return nil, nil, nil, err
+	}
 
-	return mux, server, client
+	return mux, server, client, nil
 }
 
 // teardown closes the test HTTP server.
@@ -80,7 +83,11 @@ func errorOption(*retryablehttp.Request) error {
 }
 
 func TestNewClient(t *testing.T) {
-	c := NewClient(nil, "")
+	c, err := NewClient(nil, "")
+	if err != nil {
+		t.Fatalf("Failed to create client: %v", err)
+	}
+
 	expectedBaseURL := defaultBaseURL + apiVersionPath
 
 	if c.BaseURL().String() != expectedBaseURL {
@@ -91,20 +98,20 @@ func TestNewClient(t *testing.T) {
 	}
 }
 
-func TestSetBaseURL(t *testing.T) {
-	expectedBaseURL := "http://gitlab.local/foo/" + apiVersionPath
-	c := NewClient(nil, "")
-	err := c.SetBaseURL("http://gitlab.local/foo")
+func TestWithBadBaseURL(t *testing.T) {
+	_, err := NewClient(nil, "", WithBaseURL("https://gitlab.local/foo"))
 	if err == nil {
 		t.Errorf("Expected a 'no such host' error, got: %v", err)
-	}
-	if c.BaseURL().String() != expectedBaseURL {
-		t.Errorf("BaseURL is %s, want %s", c.BaseURL().String(), expectedBaseURL)
 	}
 }
 
 func TestCheckResponse(t *testing.T) {
-	req, err := NewClient(nil, "").NewRequest("GET", "test", nil, nil)
+	c, err := NewClient(nil, "")
+	if err != nil {
+		t.Fatalf("Failed to create client: %v", err)
+	}
+
+	req, err := c.NewRequest("GET", "test", nil, nil)
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
@@ -151,8 +158,13 @@ func TestCheckResponse(t *testing.T) {
 }
 
 func TestRequestWithContext(t *testing.T) {
+	c, err := NewClient(nil, "")
+	if err != nil {
+		t.Fatalf("Failed to create client: %v", err)
+	}
+
 	ctx := context.WithValue(context.Background(), interface{}("myKey"), interface{}("myValue"))
-	req, err := NewClient(nil, "").NewRequest("GET", "test", nil, []OptionFunc{WithContext(ctx)})
+	req, err := c.NewRequest("GET", "test", nil, []OptionFunc{WithContext(ctx)})
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}

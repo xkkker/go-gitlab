@@ -25,7 +25,10 @@ import (
 )
 
 func TestDisableRunner(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/runners/2", func(w http.ResponseWriter, r *http.Request) {
@@ -33,14 +36,17 @@ func TestDisableRunner(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	_, err := client.Runners.DisableProjectRunner(1, 2, nil)
+	_, err = client.Runners.DisableProjectRunner(1, 2, nil)
 	if err != nil {
 		t.Fatalf("Runners.DisableProjectRunner returns an error: %v", err)
 	}
 }
 
 func TestListRunnersJobs(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/runners/1/jobs", func(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +68,10 @@ func TestListRunnersJobs(t *testing.T) {
 }
 
 func TestRemoveRunner(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/runners/1", func(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +79,7 @@ func TestRemoveRunner(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	_, err := client.Runners.RemoveRunner(1, nil)
+	_, err = client.Runners.RemoveRunner(1, nil)
 	if err != nil {
 		t.Fatalf("Runners.RemoveARunner returns an error: %v", err)
 	}
@@ -109,7 +118,10 @@ const exampleDetailRsp = `{
 }`
 
 func TestUpdateRunnersDetails(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/runners/6", func(w http.ResponseWriter, r *http.Request) {
@@ -131,7 +143,10 @@ func TestUpdateRunnersDetails(t *testing.T) {
 }
 
 func TestGetRunnerDetails(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/runners/6", func(w http.ResponseWriter, r *http.Request) {
@@ -197,7 +212,10 @@ const exampleRegisterNewRunner = `{
 }`
 
 func TestRegisterNewRunner(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/runners", func(w http.ResponseWriter, r *http.Request) {
@@ -225,7 +243,10 @@ func TestRegisterNewRunner(t *testing.T) {
 }
 
 func TestDeleteRegisteredRunner(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/runners", func(w http.ResponseWriter, r *http.Request) {
@@ -247,7 +268,10 @@ func TestDeleteRegisteredRunner(t *testing.T) {
 }
 
 func TestVerifyRegisteredRunner(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/runners/verify", func(w http.ResponseWriter, r *http.Request) {

@@ -8,7 +8,10 @@ import (
 )
 
 func TestGetDroneCIService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/drone-ci", func(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +30,10 @@ func TestGetDroneCIService(t *testing.T) {
 }
 
 func TestSetDroneCIService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/drone-ci", func(w http.ResponseWriter, r *http.Request) {
@@ -36,28 +42,34 @@ func TestSetDroneCIService(t *testing.T) {
 
 	opt := &SetDroneCIServiceOptions{String("t"), String("u"), Bool(true)}
 
-	_, err := client.Services.SetDroneCIService(1, opt)
+	_, err = client.Services.SetDroneCIService(1, opt)
 	if err != nil {
 		t.Fatalf("Services.SetDroneCIService returns an error: %v", err)
 	}
 }
 
 func TestDeleteDroneCIService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/drone-ci", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 	})
 
-	_, err := client.Services.DeleteDroneCIService(1)
+	_, err = client.Services.DeleteDroneCIService(1)
 	if err != nil {
 		t.Fatalf("Services.DeleteDroneCIService returns an error: %v", err)
 	}
 }
 
 func TestGetJiraService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/0/services/jira", func(w http.ResponseWriter, r *http.Request) {
@@ -118,7 +130,10 @@ func TestGetJiraService(t *testing.T) {
 }
 
 func TestSetJiraService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/jira", func(w http.ResponseWriter, r *http.Request) {
@@ -137,28 +152,34 @@ func TestSetJiraService(t *testing.T) {
 		MergeRequestsEvents:   Bool(true),
 	}
 
-	_, err := client.Services.SetJiraService(1, opt)
+	_, err = client.Services.SetJiraService(1, opt)
 	if err != nil {
 		t.Fatalf("Services.SetJiraService returns an error: %v", err)
 	}
 }
 
 func TestDeleteJiraService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/jira", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 	})
 
-	_, err := client.Services.DeleteJiraService(1)
+	_, err = client.Services.DeleteJiraService(1)
 	if err != nil {
 		t.Fatalf("Services.DeleteJiraService returns an error: %v", err)
 	}
 }
 
 func TestGetSlackService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/slack", func(w http.ResponseWriter, r *http.Request) {
@@ -177,7 +198,10 @@ func TestGetSlackService(t *testing.T) {
 }
 
 func TestSetSlackService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/slack", func(w http.ResponseWriter, r *http.Request) {
@@ -190,28 +214,34 @@ func TestSetSlackService(t *testing.T) {
 		Channel:  String("#development"),
 	}
 
-	_, err := client.Services.SetSlackService(1, opt)
+	_, err = client.Services.SetSlackService(1, opt)
 	if err != nil {
 		t.Fatalf("Services.SetSlackService returns an error: %v", err)
 	}
 }
 
 func TestDeleteSlackService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/slack", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 	})
 
-	_, err := client.Services.DeleteSlackService(1)
+	_, err = client.Services.DeleteSlackService(1)
 	if err != nil {
 		t.Fatalf("Services.DeleteSlackService returns an error: %v", err)
 	}
 }
 
 func TestGetPipelinesEmailService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/pipelines-email", func(w http.ResponseWriter, r *http.Request) {
@@ -230,7 +260,10 @@ func TestGetPipelinesEmailService(t *testing.T) {
 }
 
 func TestSetPipelinesEmailService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/pipelines-email", func(w http.ResponseWriter, r *http.Request) {
@@ -246,28 +279,34 @@ func TestSetPipelinesEmailService(t *testing.T) {
 		PipelineEvents:            nil,
 	}
 
-	_, err := client.Services.SetPipelinesEmailService(1, opt)
+	_, err = client.Services.SetPipelinesEmailService(1, opt)
 	if err != nil {
 		t.Fatalf("Services.SetPipelinesEmailService returns an error: %v", err)
 	}
 }
 
 func TestDeletePipelinesEmailService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/pipelines-email", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 	})
 
-	_, err := client.Services.DeletePipelinesEmailService(1)
+	_, err = client.Services.DeletePipelinesEmailService(1)
 	if err != nil {
 		t.Fatalf("Services.DeletePipelinesEmailService returns an error: %v", err)
 	}
 }
 
 func TestCustomIssueTrackerService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/custom-issue-tracker", func(w http.ResponseWriter, r *http.Request) {
@@ -297,7 +336,10 @@ func TestCustomIssueTrackerService(t *testing.T) {
 }
 
 func TestSetCustomIssueTrackerService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/custom-issue-tracker", func(w http.ResponseWriter, r *http.Request) {
@@ -313,21 +355,24 @@ func TestSetCustomIssueTrackerService(t *testing.T) {
 		PushEvents:  Bool(true),
 	}
 
-	_, err := client.Services.SetCustomIssueTrackerService(1, opt)
+	_, err = client.Services.SetCustomIssueTrackerService(1, opt)
 	if err != nil {
 		t.Fatalf("Services.SetCustomIssueTrackerService returns an error: %v", err)
 	}
 }
 
 func TestDeleteCustomIssueTrackerService(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/services/custom-issue-tracker", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 	})
 
-	_, err := client.Services.DeleteCustomIssueTrackerService(1)
+	_, err = client.Services.DeleteCustomIssueTrackerService(1)
 	if err != nil {
 		t.Fatalf("Services.DeleteCustomIssueTrackerService returns an error: %v", err)
 	}

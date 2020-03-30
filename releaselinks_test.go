@@ -22,7 +22,10 @@ const exampleReleaseLinkList = `[
 ]`
 
 func TestReleaseLinksService_ListReleaseLinks(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases/v0.1/assets/links",
@@ -54,7 +57,10 @@ const exampleReleaseLink = `{
  }`
 
 func TestReleaseLinksService_CreateReleaseLink(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases/v0.1/assets/links",
@@ -79,7 +85,10 @@ func TestReleaseLinksService_CreateReleaseLink(t *testing.T) {
 }
 
 func TestReleaseLinksService_GetReleaseLink(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases/v0.1/assets/links/1",
@@ -99,7 +108,10 @@ func TestReleaseLinksService_GetReleaseLink(t *testing.T) {
 }
 
 func TestReleaseLinksService_UpdateReleaseLink(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases/v0.1/assets/links/1",
@@ -123,7 +135,10 @@ func TestReleaseLinksService_UpdateReleaseLink(t *testing.T) {
 }
 
 func TestReleaseLinksService_DeleteReleaseLink(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/releases/v0.1/assets/links/1",

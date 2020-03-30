@@ -9,7 +9,10 @@ import (
 )
 
 func TestGetEpic(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/7/epics/8", func(w http.ResponseWriter, r *http.Request) {
@@ -35,21 +38,27 @@ func TestGetEpic(t *testing.T) {
 }
 
 func TestDeleteEpic(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/7/epics/8", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 	})
 
-	_, err := client.Epics.DeleteEpic("7", 8)
+	_, err = client.Epics.DeleteEpic("7", 8)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func TestListGroupEpics(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/7/epics", func(w http.ResponseWriter, r *http.Request) {
@@ -81,7 +90,10 @@ func TestListGroupEpics(t *testing.T) {
 }
 
 func TestCreateEpic(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/7/epics", func(w http.ResponseWriter, r *http.Request) {
@@ -112,7 +124,10 @@ func TestCreateEpic(t *testing.T) {
 }
 
 func TestUpdateEpic(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/7/epics/8", func(w http.ResponseWriter, r *http.Request) {

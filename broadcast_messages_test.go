@@ -9,7 +9,10 @@ import (
 )
 
 func TestListBroadcastMessages(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/broadcast_messages", func(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +71,10 @@ func TestListBroadcastMessages(t *testing.T) {
 }
 
 func TestGetBroadcastMessages(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/broadcast_messages/1/", func(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +113,10 @@ func TestGetBroadcastMessages(t *testing.T) {
 }
 
 func TestCreateBroadcastMessages(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	wantedStartsAt := time.Date(2017, time.June, 26, 6, 0, 0, 0, time.UTC)
@@ -155,7 +164,10 @@ func TestCreateBroadcastMessages(t *testing.T) {
 }
 
 func TestUpdateBroadcastMessages(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	wantedStartsAt := time.Date(2017, time.June, 26, 6, 0, 0, 0, time.UTC)
@@ -203,14 +215,17 @@ func TestUpdateBroadcastMessages(t *testing.T) {
 }
 
 func TestDeleteBroadcastMessages(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/broadcast_messages/1", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 	})
 
-	_, err := client.BroadcastMessage.DeleteBroadcastMessage(1)
+	_, err = client.BroadcastMessage.DeleteBroadcastMessage(1)
 	if err != nil {
 		t.Errorf("UpdateBroadcastMessage returned error: %v", err)
 	}

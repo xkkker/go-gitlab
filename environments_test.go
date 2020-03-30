@@ -12,7 +12,10 @@ import (
 )
 
 func TestListEnvironments(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/environments", func(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +36,10 @@ func TestListEnvironments(t *testing.T) {
 }
 
 func TestGetEnvironment(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/environments/5949167", func(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +59,10 @@ func TestGetEnvironment(t *testing.T) {
 }
 
 func TestCreateEnvironment(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/environments", func(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +83,10 @@ func TestCreateEnvironment(t *testing.T) {
 }
 
 func TestEditEnvironment(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/environments/1", func(w http.ResponseWriter, r *http.Request) {
@@ -95,28 +107,34 @@ func TestEditEnvironment(t *testing.T) {
 }
 
 func TestDeleteEnvironment(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/environments/1", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 		testURL(t, r, "/api/v4/projects/1/environments/1")
 	})
-	_, err := client.Environments.DeleteEnvironment(1, 1)
+	_, err = client.Environments.DeleteEnvironment(1, 1)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func TestStopEnvironment(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/environments/1/stop", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "POST")
 		testURL(t, r, "/api/v4/projects/1/environments/1/stop")
 	})
-	_, err := client.Environments.StopEnvironment(1, 1)
+	_, err = client.Environments.StopEnvironment(1, 1)
 	if err != nil {
 		log.Fatal(err)
 	}

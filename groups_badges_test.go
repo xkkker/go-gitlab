@@ -8,7 +8,10 @@ import (
 )
 
 func TestListGroupBadges(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/badges",
@@ -29,7 +32,10 @@ func TestListGroupBadges(t *testing.T) {
 }
 
 func TestGetGroupBadge(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/badges/2",
@@ -50,7 +56,10 @@ func TestGetGroupBadge(t *testing.T) {
 }
 
 func TestAddGroupBadge(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/badges",
@@ -72,7 +81,10 @@ func TestAddGroupBadge(t *testing.T) {
 }
 
 func TestEditGroupBadge(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/badges/2",
@@ -94,7 +106,10 @@ func TestEditGroupBadge(t *testing.T) {
 }
 
 func TestRemoveGroupBadge(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/badges/2",

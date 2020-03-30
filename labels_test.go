@@ -9,7 +9,10 @@ import (
 )
 
 func TestCreateLabel(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/labels", func(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +37,10 @@ func TestCreateLabel(t *testing.T) {
 }
 
 func TestDeleteLabel(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/labels", func(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +52,7 @@ func TestDeleteLabel(t *testing.T) {
 		Name: String("My Label"),
 	}
 
-	_, err := client.Labels.DeleteLabel("1", label)
+	_, err = client.Labels.DeleteLabel("1", label)
 
 	if err != nil {
 		log.Fatal(err)
@@ -54,7 +60,10 @@ func TestDeleteLabel(t *testing.T) {
 }
 
 func TestUpdateLabel(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/labels", func(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +96,10 @@ func TestUpdateLabel(t *testing.T) {
 }
 
 func TestSubscribeToLabel(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/labels/5/subscribe", func(w http.ResponseWriter, r *http.Request) {
@@ -106,21 +118,27 @@ func TestSubscribeToLabel(t *testing.T) {
 }
 
 func TestUnsubscribeFromLabel(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/labels/5/unsubscribe", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "POST")
 	})
 
-	_, err := client.Labels.UnsubscribeFromLabel("1", "5")
+	_, err = client.Labels.UnsubscribeFromLabel("1", "5")
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func TestListLabels(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/labels", func(w http.ResponseWriter, r *http.Request) {

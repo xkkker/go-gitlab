@@ -11,7 +11,10 @@ import (
 )
 
 func TestListProjects(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects", func(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +44,10 @@ func TestListProjects(t *testing.T) {
 }
 
 func TestListUserProjects(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/users/1/projects", func(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +77,10 @@ func TestListUserProjects(t *testing.T) {
 }
 
 func TestListProjectsUsersByID(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/", func(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +106,10 @@ func TestListProjectsUsersByID(t *testing.T) {
 }
 
 func TestListProjectsUsersByName(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/", func(w http.ResponseWriter, r *http.Request) {
@@ -123,7 +135,10 @@ func TestListProjectsUsersByName(t *testing.T) {
 }
 
 func TestListOwnedProjects(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects", func(w http.ResponseWriter, r *http.Request) {
@@ -154,7 +169,10 @@ func TestListOwnedProjects(t *testing.T) {
 }
 
 func TestListStarredProjects(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects", func(w http.ResponseWriter, r *http.Request) {
@@ -185,7 +203,10 @@ func TestListStarredProjects(t *testing.T) {
 }
 
 func TestGetProjectByID(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1", func(w http.ResponseWriter, r *http.Request) {
@@ -205,7 +226,10 @@ func TestGetProjectByID(t *testing.T) {
 }
 
 func TestGetProjectByName(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/", func(w http.ResponseWriter, r *http.Request) {
@@ -226,7 +250,10 @@ func TestGetProjectByName(t *testing.T) {
 }
 
 func TestGetProjectWithOptions(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1", func(w http.ResponseWriter, r *http.Request) {
@@ -262,7 +289,10 @@ func TestGetProjectWithOptions(t *testing.T) {
 }
 
 func TestCreateProject(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects", func(w http.ResponseWriter, r *http.Request) {
@@ -287,7 +317,10 @@ func TestCreateProject(t *testing.T) {
 }
 
 func TestUploadFile(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	tf, _ := ioutil.TempFile(os.TempDir(), "test")
@@ -326,7 +359,10 @@ func TestUploadFile(t *testing.T) {
 }
 
 func TestListProjectForks(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/", func(w http.ResponseWriter, r *http.Request) {
@@ -356,7 +392,10 @@ func TestListProjectForks(t *testing.T) {
 }
 
 func TestShareProjectWithGroup(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/share", func(w http.ResponseWriter, r *http.Request) {
@@ -368,28 +407,34 @@ func TestShareProjectWithGroup(t *testing.T) {
 		GroupAccess: AccessLevel(AccessLevelValue(50)),
 	}
 
-	_, err := client.Projects.ShareProjectWithGroup(1, opt)
+	_, err = client.Projects.ShareProjectWithGroup(1, opt)
 	if err != nil {
 		t.Errorf("Projects.ShareProjectWithGroup returned error: %v", err)
 	}
 }
 
 func TestDeleteSharedProjectFromGroup(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/share/2", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "DELETE")
 	})
 
-	_, err := client.Projects.DeleteSharedProjectFromGroup(1, 2)
+	_, err = client.Projects.DeleteSharedProjectFromGroup(1, 2)
 	if err != nil {
 		t.Errorf("Projects.DeleteSharedProjectFromGroup returned error: %v", err)
 	}
 }
 
 func TestGetApprovalConfiguration(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/approvals", func(w http.ResponseWriter, r *http.Request) {
@@ -426,7 +471,10 @@ func TestGetApprovalConfiguration(t *testing.T) {
 }
 
 func TestChangeApprovalConfiguration(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/approvals", func(w http.ResponseWriter, r *http.Request) {
@@ -468,7 +516,10 @@ func TestChangeApprovalConfiguration(t *testing.T) {
 }
 
 func TestChangeAllowedApprovers(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/approvers", func(w http.ResponseWriter, r *http.Request) {
@@ -525,7 +576,10 @@ func TestChangeAllowedApprovers(t *testing.T) {
 }
 
 func TestForkProject(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	namespace := "mynamespace"
@@ -554,7 +608,10 @@ func TestForkProject(t *testing.T) {
 }
 
 func TestGetProjectApprovalRules(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/approval_rules", func(w http.ResponseWriter, r *http.Request) {
@@ -723,7 +780,10 @@ func TestGetProjectApprovalRules(t *testing.T) {
 }
 
 func TestCreateProjectApprovalRule(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/approval_rules", func(w http.ResponseWriter, r *http.Request) {

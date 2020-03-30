@@ -8,7 +8,10 @@ import (
 )
 
 func TestTagsService_ListTags(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/repository/tags", func(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +33,10 @@ func TestTagsService_ListTags(t *testing.T) {
 }
 
 func TestTagsService_CreateReleaseNote(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/repository/tags/1.0.0/release",
@@ -53,7 +59,10 @@ func TestTagsService_CreateReleaseNote(t *testing.T) {
 }
 
 func TestTagsService_UpdateReleaseNote(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/repository/tags/1.0.0/release",

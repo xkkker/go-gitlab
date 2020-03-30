@@ -11,7 +11,10 @@ import (
 )
 
 func TestGetIssue(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5", func(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +41,10 @@ func TestGetIssue(t *testing.T) {
 }
 
 func TestDeleteIssue(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5", func(w http.ResponseWriter, r *http.Request) {
@@ -46,14 +52,17 @@ func TestDeleteIssue(t *testing.T) {
 		fmt.Fprint(w, `{"id":1, "description": "This is test project", "author" : {"id" : 1, "name": "snehal"}, "assignees":[{"id":1}]}`)
 	})
 
-	_, err := client.Issues.DeleteIssue("1", 5)
+	_, err = client.Issues.DeleteIssue("1", 5)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func TestMoveIssue(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/11/move", func(w http.ResponseWriter, r *http.Request) {
@@ -77,7 +86,10 @@ func TestMoveIssue(t *testing.T) {
 }
 
 func TestListIssues(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/issues", func(w http.ResponseWriter, r *http.Request) {
@@ -110,7 +122,10 @@ func TestListIssues(t *testing.T) {
 }
 
 func TestListProjectIssues(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues", func(w http.ResponseWriter, r *http.Request) {
@@ -141,7 +156,10 @@ func TestListProjectIssues(t *testing.T) {
 }
 
 func TestListGroupIssues(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/groups/1/issues", func(w http.ResponseWriter, r *http.Request) {
@@ -174,7 +192,10 @@ func TestListGroupIssues(t *testing.T) {
 }
 
 func TestCreateIssue(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues", func(w http.ResponseWriter, r *http.Request) {
@@ -207,7 +228,10 @@ func TestCreateIssue(t *testing.T) {
 }
 
 func TestUpdateIssue(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5", func(w http.ResponseWriter, r *http.Request) {
@@ -239,7 +263,10 @@ func TestUpdateIssue(t *testing.T) {
 }
 
 func TestSubscribeToIssue(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5/subscribe", func(w http.ResponseWriter, r *http.Request) {
@@ -267,7 +294,10 @@ func TestSubscribeToIssue(t *testing.T) {
 }
 
 func TestUnsubscribeFromIssue(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5/unsubscribe", func(w http.ResponseWriter, r *http.Request) {
@@ -294,7 +324,10 @@ func TestUnsubscribeFromIssue(t *testing.T) {
 }
 
 func TestListMergeRequestsClosingIssue(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5/closed_by", func(w http.ResponseWriter, r *http.Request) {
@@ -321,7 +354,10 @@ func TestListMergeRequestsClosingIssue(t *testing.T) {
 }
 
 func TestListMergeRequestsRelatedToIssue(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5/related_merge_requests", func(w http.ResponseWriter, r *http.Request) {
@@ -348,7 +384,10 @@ func TestListMergeRequestsRelatedToIssue(t *testing.T) {
 }
 
 func TestSetTimeEstimate(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5/time_estimate", func(w http.ResponseWriter, r *http.Request) {
@@ -372,7 +411,10 @@ func TestSetTimeEstimate(t *testing.T) {
 }
 
 func TestResetTimeEstimate(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5/reset_time_estimate", func(w http.ResponseWriter, r *http.Request) {
@@ -392,7 +434,10 @@ func TestResetTimeEstimate(t *testing.T) {
 }
 
 func TestAddSpentTime(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5/add_spent_time", func(w http.ResponseWriter, r *http.Request) {
@@ -416,7 +461,10 @@ func TestAddSpentTime(t *testing.T) {
 }
 
 func TestResetSpentTime(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5/reset_spent_time", func(w http.ResponseWriter, r *http.Request) {
@@ -437,7 +485,10 @@ func TestResetSpentTime(t *testing.T) {
 }
 
 func TestGetTimeSpent(t *testing.T) {
-	mux, server, client := setup()
+	mux, server, client, err := setup()
+	if err != nil {
+		t.Fatalf("Failed to setup test: %v", err)
+	}
 	defer teardown(server)
 
 	mux.HandleFunc("/api/v4/projects/1/issues/5/time_stats", func(w http.ResponseWriter, r *http.Request) {
